@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store';
 import { addToCart } from '../store/slices/cartSlice';
 import { addProductReview } from '../store/slices/productsSlice';
-import { Product, Review } from '../../../shared/types';
+import { Review } from '../../../shared/types';
 import {
   Star,
   ShieldCheck,
@@ -44,7 +44,11 @@ export const ProductDetails: React.FC = () => {
 
   // Bundle Items (Frequently Bought Together)
   const [bundleChecked, setBundleChecked] = useState([true, true, true]);
-  const [bundleProducts, setBundleProducts] = useState<Product[]>([]);
+  const bundleProducts = product
+    ? allProducts
+        .filter((p) => p.category === product.category && p.id !== product.id)
+        .slice(0, 2)
+    : [];
 
   useEffect(() => {
     if (product) {
@@ -63,15 +67,6 @@ export const ProductDetails: React.FC = () => {
     }
   }, [product]);
 
-  // Load related items for bundle
-  useEffect(() => {
-    if (product) {
-      const related = allProducts
-        .filter((p) => p.category === product.category && p.id !== product.id)
-        .slice(0, 2);
-      setBundleProducts(related);
-    }
-  }, [product, allProducts]);
 
   if (!product) {
     return (
@@ -234,7 +229,7 @@ export const ProductDetails: React.FC = () => {
           {/* Large image active container with zoom-on-hover class */}
           <div className="flex-grow order-1 md:order-2 bg-neutral-50 border border-gray-100 rounded-sm p-4 h-[350px] md:h-[450px] flex items-center justify-center zoom-container">
             <img
-              src={activeImage}
+              src={activeImage || undefined}
               alt={product.title}
               className="max-h-full max-w-full object-contain zoom-image"
             />

@@ -84,18 +84,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSidebar }) => {
     const filtered = allProducts
       .filter((p) => {
         const matchesQuery =
-          p.title.toLowerCase().includes(query) ||
-          p.category.toLowerCase().includes(query) ||
-          p.brand.toLowerCase().includes(query);
+          (p.title?.toLowerCase() || '').includes(query) ||
+          (p.category?.toLowerCase() || '').includes(query) ||
+          (p.brand?.toLowerCase() || '').includes(query);
         const matchesCategory =
-          selectedCategory === 'All' || p.category.toLowerCase() === selectedCategory.toLowerCase();
+          selectedCategory === 'All' || (p.category?.toLowerCase() || '') === selectedCategory.toLowerCase();
         return matchesQuery && matchesCategory;
       })
       .map((p) => p.title)
       .slice(0, 8);
 
     // Remove duplicates
-    setSuggestions(Array.from(new Set(filtered)));
+    setSuggestions(Array.from(new Set(filtered.filter(Boolean))));
   }, [searchQuery, selectedCategory]);
 
   const handleSearchSubmit = (e?: React.FormEvent) => {
@@ -124,7 +124,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSidebar }) => {
   };
 
   // Category list extraction
-  const categories = ['All', ...Array.from(new Set(allProducts.map((p) => p.category)))];
+  const categories = ['All', ...Array.from(new Set(allProducts.map((p) => p.category).filter(Boolean)))];
 
   const handleRoleSwitch = (role: 'customer' | 'admin') => {
     dispatch(login({ role }));

@@ -52,17 +52,17 @@ export const SearchPage: React.FC = () => {
   const filteredProducts = allProducts.filter((p) => {
     const matchesQuery =
       !queryParam ||
-      p.title.toLowerCase().includes(queryParam.toLowerCase()) ||
-      p.description.toLowerCase().includes(queryParam.toLowerCase()) ||
-      p.brand.toLowerCase().includes(queryParam.toLowerCase());
+      (p.title?.toLowerCase() || '').includes(queryParam.toLowerCase()) ||
+      (p.description?.toLowerCase() || '').includes(queryParam.toLowerCase()) ||
+      (p.brand?.toLowerCase() || '').includes(queryParam.toLowerCase());
 
     const matchesCategory =
-      selectedCategory === 'All' || p.category.toLowerCase() === selectedCategory.toLowerCase();
+      selectedCategory === 'All' || (p.category?.toLowerCase() || '') === selectedCategory.toLowerCase();
 
     const finalPrice = getDiscountedPrice(p.price, p.discountPercentage);
     const matchesPrice = !priceMax || finalPrice <= priceMax;
 
-    const matchesBrand = selectedBrand === 'All' || p.brand.toLowerCase() === selectedBrand.toLowerCase();
+    const matchesBrand = selectedBrand === 'All' || (p.brand?.toLowerCase() || '') === selectedBrand.toLowerCase();
 
     const matchesRating = p.rating >= minRating;
 
@@ -84,7 +84,7 @@ export const SearchPage: React.FC = () => {
   });
 
   // Extract Categories and Brands for Sidebar
-  const categories = ['All', ...Array.from(new Set(allProducts.map((p) => p.category)))];
+  const categories = ['All', ...Array.from(new Set(allProducts.map((p) => p.category).filter(Boolean)))];
   const brands = ['All', ...Array.from(new Set(allProducts.map((p) => p.brand).filter(Boolean)))];
 
   return (
