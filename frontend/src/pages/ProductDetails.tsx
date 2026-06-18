@@ -567,40 +567,46 @@ export const ProductDetails: React.FC = () => {
           {/* Reviews list */}
           {reviewsList.length > 0 ? (
             <div className="flex flex-col gap-6">
-              {reviewsList.map((rev) => (
-                <div key={rev.id} className="border-b border-gray-100 pb-5 last:border-0">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <img src={rev.user.avatar} alt="avatar" className="h-6 w-6 rounded-full bg-gray-200" />
-                    <span className="text-xs font-bold text-gray-900">{rev.user.name}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs mb-1">
-                    <div className="flex text-amber-500">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          size={12}
-                          fill={i < rev.rating ? 'currentColor' : 'none'}
-                          className="currentColor"
-                        />
-                      ))}
+              {reviewsList.map((rev, idx) => {
+                const userName = rev.user?.name || (rev as any).reviewerName || 'Anonymous';
+                const userAvatar = rev.user?.avatar || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(userName)}`;
+                const reviewDate = rev.createdAt || (rev as any).date || new Date().toISOString();
+                const reviewTitle = rev.title || 'Verified purchase review';
+                return (
+                  <div key={rev.id || `rev-${idx}`} className="border-b border-gray-100 pb-5 last:border-0">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <img src={userAvatar} alt="avatar" className="h-6 w-6 rounded-full bg-gray-200" />
+                      <span className="text-xs font-bold text-gray-900">{userName}</span>
                     </div>
-                    <span className="font-bold text-gray-900">{rev.title}</span>
-                  </div>
-                  <div className="text-[10px] text-gray-500 mb-2">
-                    Reviewed on {new Date(rev.createdAt).toLocaleDateString()}
-                    <span className="text-amazon-orange font-bold ml-2">Verified Purchase</span>
-                  </div>
-                  <p className="text-xs text-gray-700 leading-relaxed font-medium">{rev.comment}</p>
+                    <div className="flex items-center gap-2 text-xs mb-1">
+                      <div className="flex text-amber-500">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            size={12}
+                            fill={i < rev.rating ? 'currentColor' : 'none'}
+                            className="currentColor"
+                          />
+                        ))}
+                      </div>
+                      <span className="font-bold text-gray-900">{reviewTitle}</span>
+                    </div>
+                    <div className="text-[10px] text-gray-500 mb-2">
+                      Reviewed on {new Date(reviewDate).toLocaleDateString()}
+                      <span className="text-amazon-orange font-bold ml-2">Verified Purchase</span>
+                    </div>
+                    <p className="text-xs text-gray-700 leading-relaxed font-medium">{rev.comment}</p>
 
-                  <div className="flex items-center gap-3 mt-3.5 text-xs text-gray-500">
-                    <button className="px-5 py-1 border border-gray-300 rounded-md hover:bg-gray-100 font-semibold cursor-pointer text-[11px] text-gray-800 transition flex items-center gap-1.5 shadow-sm">
-                      <ThumbsUp size={12} /> Helpful
-                    </button>
-                    <span className="text-gray-300">|</span>
-                    <span className="hover:underline cursor-pointer font-semibold">Report</span>
+                    <div className="flex items-center gap-3 mt-3.5 text-xs text-gray-500">
+                      <button className="px-5 py-1 border border-gray-300 rounded-md hover:bg-gray-100 font-semibold cursor-pointer text-[11px] text-gray-800 transition flex items-center gap-1.5 shadow-sm">
+                        <ThumbsUp size={12} /> Helpful
+                      </button>
+                      <span className="text-gray-300">|</span>
+                      <span className="hover:underline cursor-pointer font-semibold">Report</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="text-gray-500 italic text-center py-6 text-xs">

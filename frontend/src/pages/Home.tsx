@@ -47,6 +47,20 @@ export const Home: React.FC = () => {
               Weight: `${p.weight || '1.2'} lbs`,
               Warranty: p.warrantyInformation || '1 Year ShopMart Warranty',
             },
+            reviews: (p.reviews || []).map((r: any, idx: number) => ({
+              id: r.id || `rev-${p.id}-${idx}`,
+              productId: p.id,
+              user: {
+                id: r.reviewerEmail || `usr-${idx}`,
+                name: r.reviewerName || 'Anonymous',
+                avatar: r.avatar || `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(r.reviewerName || 'Anonymous')}`,
+              },
+              rating: r.rating || 5,
+              title: r.title || 'Verified purchase review',
+              comment: r.comment || '',
+              createdAt: r.date || r.createdAt || new Date().toISOString(),
+              helpfulVotes: r.helpfulVotes || Math.floor(Math.random() * 10),
+            })),
           }));
           dispatch(setProducts(processed));
           setError(null);
